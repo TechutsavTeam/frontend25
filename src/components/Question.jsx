@@ -1,59 +1,38 @@
-import React, { useState } from "react";
+import PropTypes from "prop-types";
 
-const Question = ({ question, answer }) => {
-  const [more, setMore] = useState(false);
+const Question = ({ question, answer, isOpen, onClick }) => {
   return (
-    <div className="">
-      <div
-        onClick={() => setMore(!more)}
-        className="border-2 border-black rounded-lg sm:w-3/4 py-4 px-4 flex justify-between relative cursor-pointer"
+    <div className="border-b border-gray-300 transition-all duration-500">
+      <button
+        onClick={onClick}
+        className="w-full flex justify-between items-center px-5 py-4 text-lg font-semibold text-[#0b385f] focus:outline-none 
+          bg-white hover:bg-[#e7f1fb] rounded-lg transition-all duration-300 ease-in-out shadow-sm hover:shadow-md"
       >
-        <h1>{question}</h1>
-        {!more ? (
-          <button onClick={() => setMore(!more)}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m19.5 8.25-7.5 7.5-7.5-7.5"
-              />
-            </svg>
-          </button>
-        ) : (
-          <button onClick={() => setMore(!more)}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m4.5 15.75 7.5-7.5 7.5 7.5"
-              />
-            </svg>
-          </button>
-        )}
-      </div>
+        <span className="transition-all duration-300">{question}</span>
+        <span className={`transform transition-transform duration-500 ${isOpen ? "rotate-180 scale-110" : "scale-100"}`}>
+          ▼
+        </span>
+      </button>
+
+      {/* Expanding Answer with Slide & Fade effect */}
       <div
-        className={`transition-all duration-500 ease-in-out bg-black/5 rounded-lg overflow-hidden opacity-0 sm:w-3/4 ${
-          more ? "max-h-96 opacity-100" : "max-h-0"
+        className={`transition-all duration-500 ease-in-out overflow-hidden ${
+          isOpen ? "max-h-96 opacity-100 translate-y-0 py-3" : "max-h-0 opacity-0 -translate-y-4"
         }`}
       >
-        <h1 className="p-9">{answer}</h1>
+        <p className="px-5 py-2 text-[#1c2127] bg-[#f9fbfc] rounded-lg shadow-md">
+          {answer}
+        </p>
       </div>
     </div>
   );
+};
+
+Question.propTypes = {
+  question: PropTypes.string.isRequired,
+  answer: PropTypes.string.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
 };
 
 export default Question;
