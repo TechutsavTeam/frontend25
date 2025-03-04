@@ -1,173 +1,116 @@
-/* eslint-disable react/jsx-key */
-import React, { useEffect, useState, useRef } from 'react'
-import Flagship from '../components/Flagship'
-import CardSkeleton from '../components/CardSkeleton'
-import { api } from '../api/auth'
-import Carousel from 'react-multi-carousel'
-import 'react-multi-carousel/lib/styles.css'
-import { useMediaQuery } from '@mui/material'
-import { motion } from 'framer-motion'
-import PixelCard from '../components/PixelCard'
-import SplitText from '../components/SplitText'
-import StarBorder from '../components/StarBorder'
-import TiltedCard from '../components/TiltedCard'
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { api } from "../api/auth";
+import { useMediaQuery } from "@mui/material";
 
-// Updated gradient color to avoid white
-const gradientColor =
-  'linear-gradient(135deg, #1c2127, #0b385f, #3373b0, #8abbd9, #1e8fb4)'
+// Static images for each department (Replace with actual image paths)
+const departmentImages = {
+  CSE: "/images/cs.jpg",
+  IT: "/images/it.png",
+  CSBS: "/images/csbs.png",
+  DS: "/images/ds.png",
+};
 
-// changed the component to pixelcard
-// const SpotlightCard = ({
-//   children,
-//   className = '',
-//   spotlightColor = 'rgba(255, 255, 255, 0.25)',
-//   onClick
-// }) => {
-//   const divRef = useRef(null)
+// Neon Blue Glow CSS Animation
+const neonGlow = `
+@keyframes neon-glow {
+  0% { box-shadow: 0 0 12px rgba(8, 100, 140, 0.59), 0 0 24px rgba(8, 100, 140, 0.59); }
+  50% { box-shadow: 0 0 18px rgba(8, 100, 140, 0.9), 0 0 36px rgba(8, 100, 140, 0.9); }
+  100% { box-shadow: 0 0 12px rgba(8, 100, 140, 0.59), 0 0 24px rgba(8, 100, 140, 0.59); }
+}
+`;
 
-//   const handleMouseMove = e => {
-//     const rect = divRef.current.getBoundingClientRect()
-//     const x = e.clientX - rect.left
-//     const y = e.clientY - rect.top
+// Inject Neon Glow Animation into the document head
+const style = document.createElement("style");
+style.innerHTML = neonGlow;
+document.head.appendChild(style);
 
-//     divRef.current.style.setProperty('--mouse-x', `${x}px`)
-//     divRef.current.style.setProperty('--mouse-y', `${y}px`)
-//     divRef.current.style.setProperty('--spotlight-color', spotlightColor)
-//   }
-
-//   return (
-//     <motion.div
-//       ref={divRef}
-//       onMouseMove={handleMouseMove}
-//       onClick={onClick}
-//       className={`card-spotlight ${className}`}
-//       style={{
-//         position: 'relative',
-//         overflow: 'hidden',
-//         borderRadius: '8px',
-//         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-//         border: '2px solid #3373b0',
-//         transition: 'box-shadow 0.3s ease',
-//         background: gradientColor
-//       }}
-//       whileHover={{ scale: 1.05 }}
-//       transition={{ type: 'spring', stiffness: 300 }}
-//     >
-//       {children}
-//       <div
-//         style={{
-//           position: 'absolute',
-//           top: 0,
-//           left: 0,
-//           width: '100%',
-//           height: '100%',
-//           background: `radial-gradient(circle at var(--mouse-x) var(--mouse-y), var(--spotlight-color), transparent 80%)`,
-//           pointerEvents: 'none'
-//         }}
-//       />
-//     </motion.div>
-//   )
-// }
-
-// const DockDepartment = ({ name, onClick }) => {
-// return (
-// <></>
-// <SpotlightCard
-//   className='flex flex-col justify-center items-center h-40 cursor-pointer'
-//   onClick={onClick}
-// >
-//   <h2 className='text-2xl font-bold' style={{ color: '#ffffff' }}>
-//     {name}
-//   </h2>
-//   <button
-//     className='mt-4 px-4 py-2 bg-white/20 rounded-full text-sm font-medium hover:bg-white/30 transition-colors'
-//     style={{ color: '#ffffff' }}
-//     onClick={e => {
-//       e.stopPropagation()
-//       onClick()
-//     }}
-//   >
-//     See More
-//   </button>
-// </SpotlightCard>
-// )
-// }
+const SpotlightCard = ({ name, onClick }) => {
+  return (
+    <motion.div
+      onClick={onClick}
+      className="card-spotlight"
+      style={{
+        position: "relative",
+        overflow: "hidden",
+        borderRadius: "12px",
+        border: "3px solid transparent",
+        animation: "neon-glow 1.8s infinite alternate",
+        backgroundImage: `url(${departmentImages[name]})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        height: "200px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+      whileHover={{ scale: 1.05 }} // Reduced scale to 1.05 for smoother zoom
+      transition={{ type: "spring", stiffness: 100, damping: 10 }} // Reduced stiffness to remove lag
+    >
+      <div
+        className="overlay"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          background: "rgba(0, 0, 0, 0.4)",
+        }}
+      />
+      <h2 className="text-2xl font-bold text-white relative">{name}</h2>
+      <button
+        className="mt-4 px-4 py-2 bg-white/20 rounded-full text-sm font-medium hover:bg-white/30 transition-colors relative"
+        style={{ color: "#ffffff" }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick();
+        }}
+      >
+        See More
+      </button>
+    </motion.div>
+  );
+};
 
 const Events = () => {
-  const [flagShipEvents, setFlagShipEvents] = useState([])
-  const [flagshipLoading, setFlagshipLoading] = useState(true)
-  const check = useMediaQuery('(min-width:750px)')
-  const departments = ['CSE', 'IT', 'CSBS', 'DS']
+  const [flagShipEvents, setFlagShipEvents] = useState([]);
+  const [flagshipLoading, setFlagshipLoading] = useState(true);
+  const check = useMediaQuery("(min-width:750px)");
+  const departments = ["CSE", "IT", "CSBS", "DS"];
 
-  const handleDepartmentClick = dept => {
-    window.location.href = `/more-events/${dept.toLowerCase()}`
-  }
+  const handleDepartmentClick = (dept) => {
+    window.location.href = `/more-events/${dept.toLowerCase()}`;
+  };
 
   useEffect(() => {
-    setFlagshipLoading(true)
+    setFlagshipLoading(true);
     api
-      .get('event/getFlagshipEvents')
-      .then(result => {
-        setFlagShipEvents(Array.isArray(result.data) ? result.data : [])
+      .get("event/getFlagshipEvents")
+      .then((result) => {
+        setFlagShipEvents(Array.isArray(result.data) ? result.data : []);
       })
-      .catch(err => {
-        console.error('Error fetching flagship events:', err)
+      .catch((err) => {
+        console.error("Error fetching flagship events:", err);
       })
       .finally(() => {
-        setFlagshipLoading(false)
-      })
-  }, [])
+        setFlagshipLoading(false);
+      });
+  }, []);
 
   return (
-    <div
-      className='py-5 px-9 flex flex-col gap-8'
-      style={{ backgroundColor: '#e0f2fe' }}
-    >
-      <div className='w-full justify-start'>
-        <h1 className='font-semibold text-xl sm:text-3xl'>Departments</h1>
-        <div className='mt-9 grid sm:grid-cols-2 md:grid-cols-4 gap-9 w-full items-center justify-center'>
+    <div className="py-5 px-9 flex flex-col gap-8" style={{ backgroundColor: "#e0f2fe" }}>
+      <div className="w-full justify-start">
+        <h1 className="font-semibold text-xl sm:text-3xl">Departments</h1>
+        <div className="mt-9 grid sm:grid-cols-2 md:grid-cols-4 gap-9 w-full items-center justify-center">
           {departments.map((dept, i) => (
-            <button onClick={() => handleDepartmentClick(dept)}>
-           <TiltedCard
-           imageSrc="https://images.freecreatives.com/wp-content/uploads/2016/04/Website-Backgrounds-For-Desktop.jpg"
-           altText="Kendrick Lamar - GNX Album Cover"
-           captionText="Kendrick Lamar - GNX"
-           containerHeight="200px"
-           containerWidth="300px"
-           imageHeight="200px"
-           imageWidth="300px"
-           rotateAmplitude={12}
-           scaleOnHover={1.1}
-           showMobileWarning={false}
-           showTooltip={false}
-           displayOverlayContent={true}
-           overlayContent={
-             <div className="flex items-center justify-center h-full w-full text-white">
-                 <SplitText
-                   text={dept}
-                   className="text-2xl font-semibold "
-                   delay={150}
-                   animationFrom={{
-                     opacity: 0,
-                     transform: "translate3d(0,50px,0)",
-                   }}
-                   animationTo={{
-                     opacity: 1,
-                     transform: "translate3d(0,0,0)",
-                   }}
-                   easing="easeOutCubic"
-                   threshold={0.2}
-                   rootMargin="-50px"
-                 />
-             </div>
-           }
-           />         
-           </button>
+            <SpotlightCard key={i} name={dept} onClick={() => handleDepartmentClick(dept)} />
           ))}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Events
+export default Events;

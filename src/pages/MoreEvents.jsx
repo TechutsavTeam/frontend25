@@ -1,166 +1,109 @@
-import React, { useState, useEffect, useRef } from "react";
-import Event from "../components/Event";
-import { Link } from "react-router-dom";
-import { api } from "../api/auth";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import Navbar from "../components/Navbar";
 import Footer from "./Footer";
-import CardSkeleton from "../components/CardSkeleton";
-import "react-loading-skeleton/dist/skeleton.css";
-import { useParams } from "react-router-dom";
+
+const theme = {
+  eerieBlack: '#1C2127',
+  berkeleyBlue: '#0B385F',
+  uclaBlue: '#3373B0',
+  columbiaBlue: '#BED4E9',
+  aliceBlue: '#E7F1FB'
+};
+
+const workshopData = [
+  {
+    id: 1,
+    title: "AI & ML Workshop",
+    image: "/images/workshop.png",
+    description: "Explore the fundamentals of AI & ML with hands-on projects.",
+    venue: "Auditorium Hall A",
+    time: "10:00 AM - 2:00 PM",
+  },
+  {
+    id: 2,
+    title: "Cybersecurity Bootcamp",
+    image: "/images/workshop.png",
+    description: "Learn the latest trends in cybersecurity and ethical hacking.",
+    venue: "Lab 5, IT Block",
+    time: "11:00 AM - 3:00 PM",
+  },
+  {
+    id: 3,
+    title: "Blockchain Fundamentals",
+    image: "/images/workshop.png",
+    description: "Dive into blockchain technology and smart contracts.",
+    venue: "Room 201, CSE Block",
+    time: "9:00 AM - 1:00 PM",
+  },
+  {
+    id: 4,
+    title: "Cloud Computing Seminar",
+    image: "/images/workshop.png",
+    description: "Understand cloud architecture with AWS, Azure, and GCP.",
+    venue: "Conference Room B",
+    time: "2:00 PM - 5:00 PM",
+  },
+];
 
 const MoreEvents = () => {
-  const originalNames = [
-    "All",
-    "Computer Science and Engineering",
-    "Information Technology",
-    "Computer Science and Business Systems",
-    "Applied Mathematics and Computational Science",
-  ];
-  const { departmentName } = useParams();
-  const options = ["All", "CSE", "IT", "CSBS", "DS"];
-  const [isSeeMoreHovered, setIsSeeMoreHovered] = useState(false);
-  const scrollUp = useRef(null);
-  useEffect(() => {
-    scrollUp.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
-
-  const [eventDetails, setEventDetails] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  //Toggle
-  const [open, setOpen] = React.useState(false);
-  const anchorRef = React.useRef(null);
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
-
-  const handleClick = () => {
-    console.info(`You clicked ${options[selectedIndex]}`);
-  };
-
-  const handleMenuItemClick = (event, index) => {
-    console.log(options[index]);
-    setSelectedIndex(index);
-    setOpen(false);
-  };
-
-  const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
-  };
-
-  const handleClose = (event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
-      return;
-    }
-
-    setOpen(false);
-  };
-
-  useEffect(() => {
-    api
-      .post("event/getSpecificEvents", {
-        departmentName: originalNames[options.indexOf(departmentName)],
-      })
-      .then((result) => {
-        setEventDetails(result.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [selectedIndex]);
+  const [selectedWorkshop, setSelectedWorkshop] = useState(workshopData[0]);
 
   return (
-    <div>
-      <div
-        className="flex flex-col items-center justify-center w-full gap-6 p-9 relative min-h-screen"
-        ref={scrollUp}
-      >
-        <h1 className="text-5xl font-bold">TECHUTSAV 2025</h1>
-        <h2 className="text-4xl font-bold">EVENTS</h2>
-        <div className="w-full flex justify-end">
-          {/* <div className="border-2 border-black rounded-lg mr-9">
-            <React.Fragment>
-              <ButtonGroup
-                variant="outline"
-                ref={anchorRef}
-                aria-label="Button group with a nested menu"
-              >
-                <Button onClick={handleClick}>{options[selectedIndex]}</Button>
-                <Button
-                  size="small"
-                  aria-controls={open ? "split-button-menu" : undefined}
-                  aria-expanded={open ? "true" : undefined}
-                  aria-label="select merge strategy"
-                  aria-haspopup="menu"
-                  onClick={handleToggle}
-                >
-                  <ArrowDropDownIcon />
-                </Button>
-              </ButtonGroup>
-              <Popper
-                sx={{
-                  zIndex: 1,
-                }}
-                open={open}
-                anchorEl={anchorRef.current}
-                role={undefined}
-                transition
-                disablePortal
-              >
-                {({ TransitionProps, placement }) => (
-                  <Grow
-                    {...TransitionProps}
-                    style={{
-                      transformOrigin:
-                        placement === "bottom" ? "center top" : "center bottom",
-                    }}
-                  >
-                    <Paper>
-                      <ClickAwayListener onClickAway={handleClose}>
-                        <MenuList id="split-button-menu" autoFocusItem>
-                          {options.map((option, index) => (
-                            <MenuItem
-                              key={option}
-                              selected={index === selectedIndex}
-                              onClick={(event) =>
-                                handleMenuItemClick(event, index)
-                              }
-                            >
-                              {option}
-                            </MenuItem>
-                          ))}
-                        </MenuList>
-                      </ClickAwayListener>
-                    </Paper>
-                  </Grow>
-                )}
-              </Popper>
-            </React.Fragment>
-          </div> */}
-          <Link
-            to="/"
-            className={` px-7 py-1  fill-right  hover:text-white border-2 border-black rounded-md  ${
-              isSeeMoreHovered ? "hovered" : ""
-            }`}
-            onMouseEnter={() => setIsSeeMoreHovered(true)}
-            onMouseLeave={() => setIsSeeMoreHovered(false)}
-          >
-            Back
-          </Link>
-        </div>
-        <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-9 place-items-center justify-items-center w-full ">
-          {loading ? (
-            <CardSkeleton cards={3} />
-          ) : (
-            eventDetails.map((event) => (
-              <Event
-                uniqueName={event.uniqueName}
-                eventName={event.eventName}
-                eventDescription={event.eventAbstract}
-                image={"https://csi.coep.org.in/csi_logo.png"}
-              />
-            ))
-          )}
-        </div>
+    <div className="w-full min-h-screen" style={{ backgroundColor: theme.aliceBlue }}>
+      <Navbar />
+      <div className="flex flex-col items-center py-10">
+        <h1 className="text-5xl font-bold text-center mb-6" style={{ color: theme.eerieBlack }}>TECHUTSAV 2025</h1>
+        <h2 className="text-3xl font-semibold text-center mb-10" style={{ color: theme.berkeleyBlue }}>EVENTS</h2>
       </div>
+
+      <div className="flex w-full max-w-7xl mx-auto p-6 gap-10">
+        {/* Left Side: Workshop List */}
+        <div className="w-1/2 flex flex-col gap-6 overflow-y-auto max-h-[500px]">
+          {workshopData.map((workshop) => (
+            <motion.div
+              key={workshop.id}
+              className="cursor-pointer p-4 rounded-lg shadow-md flex items-center gap-4 transition"
+              style={{ backgroundColor: theme.columbiaBlue }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setSelectedWorkshop(workshop)}
+            >
+              <img
+                src={workshop.image}
+                alt={workshop.title}
+                className="w-20 h-20 object-cover rounded-lg"
+              />
+              <h3 className="text-xl font-semibold" style={{ color: theme.eerieBlack }}>{workshop.title}</h3>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Right Side: Workshop Details */}
+        <motion.div
+          className="w-1/2 p-6 rounded-lg shadow-lg"
+          style={{ backgroundColor: theme.uclaBlue, color: theme.columbiaBlue }}
+          key={selectedWorkshop.id}
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h3 className="text-2xl font-bold mb-4">{selectedWorkshop.title}</h3>
+          <img
+            src={selectedWorkshop.image}
+            alt={selectedWorkshop.title}
+            className="w-full h-60 object-cover rounded-lg mb-4"
+          />
+          <p className="text-lg">{selectedWorkshop.description}</p>
+          <div className="mt-4">
+            <p><strong>Venue:</strong> {selectedWorkshop.venue}</p>
+            <p><strong>Time:</strong> {selectedWorkshop.time}</p>
+          </div>
+        </motion.div>
+      </div>
+
       <Footer />
     </div>
   );

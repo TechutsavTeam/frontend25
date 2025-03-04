@@ -1,35 +1,125 @@
-import React, { useState } from "react";
-import EventDetails from "./EventDetails";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { motion, useMotionValue, useTransform } from "framer-motion";
+import { api } from "../api/auth";
 import { useMediaQuery } from "@mui/material";
 
-import EventLogo from "../assets/event-logo.png";
+// Static images for each department (Replace with actual image paths)
+const departmentImages = {
+  CSE: "/images/cs.jpg",
+  IT: "/images/it.png",
+  CSBS: "/images/csbs.png",
+  DS: "/images/ds.png",
+};
 
-const Event = ({ uniqueName, eventName, eventDescription, image }) => {
-  const [isSeeMoreHovered, setIsSeeMoreHovered] = useState(false);
-  const mobileCheck = useMediaQuery("(min-width: 600px)");
+// Neon Blue Glow CSS Animation
+const neonGlow = `
+@keyframes neon-glow {
+  0% { box-shadow: 0 0 12px rgba(8, 100, 140, 0.59), 0 0 24px rgba(8, 100, 140, 0.59); }
+  50% { box-shadow: 0 0 18px rgba(8, 100, 140, 0.9), 0 0 36px rgba(8, 100, 140, 0.9); }
+  100% { box-shadow: 0 0 12px rgba(8, 100, 140, 0.59), 0 0 24px rgba(8, 100, 140, 0.59); }
+}
+`;
 
+// Inject Neon Glow Animation into the document head
+const style = document.createElement("style");
+style.innerHTML = neonGlow;
+document.head.appendChild(style);
+
+const SpotlightCard = ({ name, onClick }) => {
   return (
-    <div
-      className={`${
-        mobileCheck ? "h-[600px] p-7" : "max-h-[500px] p-2"
-      } lg:w-full w-5/6 border-2 border-black rounded-md  flex flex-col gap-9 items-center cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-90 aspect-[1/1] text-center`}
+    <motion.div
+      onClick={onClick}
+      className="card-spotlight"
+      style={{
+        position: "relative",
+        marginBottom: "30px",
+        overflow: "hidden",
+        borderRadius: "12px",
+        animation: "neon-glow 1.8s infinite alternate",
+        backgroundImage: `url(${departmentImages[name]})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        height: "200px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+      whileHover={{
+        scale: 1.05,
+        rotate: Math.random() > 0.5 ? -5 : 5, // Randomly tilts left or right
+      }}
+      transition={{
+        type: "spring",
+        stiffness: 120,
+        damping: 10,
+      }}
     >
-      <img src={EventLogo} alt="Event" className="w-1/2 md:w-1/3  mb-4" />
-      <h1 className="font-bold text-3xl">{eventName}</h1>
-      <p className=" text-start">{eventDescription}</p>
-      <Link
-        to={`/events/${uniqueName}`}
-        className={`px-7 py-1  fill-right  hover:text-white border-2 border-black rounded-md  ${
-          isSeeMoreHovered ? "hovered" : ""
-        }`}
-        onMouseEnter={() => setIsSeeMoreHovered(true)}
-        onMouseLeave={() => setIsSeeMoreHovered(false)}
+      <div
+        className="overlay"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          background: "rgba(0, 0, 0, 0.4)",
+        }}
+      />
+      <h2 className="text-2xl font-bold text-white relative">{name}</h2>
+      <button
+        className="mt-4 px-4 py-2 bg-white/20 rounded-full text-sm font-medium hover:bg-white/30 transition-colors relative"
+        style={{ color: "#ffffff" }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick();
+        }}
       >
         See More
-      </Link>
+      </button>
+    </motion.div>
+  );
+};
+
+
+
+const Events = () => {
+  const [flagShipEvents, setFlagShipEvents] = useState([]);
+  const [flagshipLoading, setFlagshipLoading] = useState(true);
+  const check = useMediaQuery("(min-width:750px)");
+  const departments = ["CSE", "IT", "CSBS", "DS"];
+
+  const handleDepartmentClick = (dept) => {
+    window.location.href = `/more-events/${dept.toLowerCase()}`;
+  };
+
+  useEffect(() => {
+    setFlagshipLoading(true);
+    api
+      .get("event/getFlagshipEvents")
+      .then((result) => {
+        setFlagShipEvents(Array.isArray(result.data) ? result.data : []);
+      })
+      .catch((err) => {
+        console.error("Error fetching flagship events:", err);
+      })
+      .finally(() => {
+        setFlagshipLoading(false);
+      });
+  }, []);
+
+  return (
+    <div className="py-5 px-9 flex flex-col gap-8" style={{ backgroundColor: "#e0f2fe" }}>
+      <div className="w-full justify-start">
+        <h1 className="font-semibold text-xl sm:text-3xl">Departments</h1>
+        <div className="mt-9 grid sm:grid-cols-2 md:grid-cols-4 gap-9 w-full items-center justify-center">
+          {departments.map((dept, i) => (
+            <SpotlightCard key={i} name={dept} onClick={() => handleDepartmentClick(dept)} />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
 
-export default Event;
+export default Events;
