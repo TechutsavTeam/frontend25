@@ -82,7 +82,7 @@ const Events = () => {
   const departments = ["CSE", "IT", "CSBS", "DS"];
 
   const handleDepartmentClick = (dept) => {
-    window.location.href = `/events/${dept.toLowerCase()}`;
+    window.location.href = `/more-events/${dept.toLowerCase()}`;
   };
 
   useEffect(() => {
