@@ -9,7 +9,7 @@ import { Element } from "react-scroll";
 import { useEffect, useState } from "react";
 import { api } from "./api/auth";
 import MainLoader from "./components/MainLoader";
-import Flagship from "./components/Flagship";
+// import Flagship from "./components/Flagship";
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -50,9 +50,6 @@ function App() {
       </Element>
       <Element id="about" name="about">
         <About authenticated={authenticated} />
-      </Element>
-      <Element id="Flagship" name="Flagship">
-        <Flagship authenticated={authenticated} />
       </Element>
       <Element id="events" name="events">
         <Events authenticated={authenticated} />

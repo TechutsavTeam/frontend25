@@ -60,6 +60,14 @@ const workshopData = [
   }
 ];
 
+const theme = {
+  eerieBlack: "#1C2127",
+  berkeleyBlue: "#0B385F",
+  uclaBlue: "#3373B0",
+  columbiaBlue: "#BED4E9",
+  aliceBlue: "#E7F1FB"
+};
+
 const MoreEvents = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
@@ -68,9 +76,9 @@ const MoreEvents = () => {
     <div className="w-full min-h-screen bg-light-blue-50 text-gray-800">
       <Navbar />
 
-      <div className="text-center py-6">
-        <h1 className="text-4xl font-extrabold tracking-wide bg-gradient-to-r from-[#8ccaf2] to-[#1da1f2] bg-clip-text text-transparent">
-          Techutsav 2024 Events
+      <div className="text-center py-6 " style={{backgroundColor : theme.aliceBlue}} >
+        <h1 className="text-4xl font-bold tracking-wide bg-gradient-to-r from-[#3373b0] to-[#1da1f2] bg-clip-text text-transparent">
+          Techutsav 2025 Events
         </h1>
       </div>
 
@@ -92,8 +100,9 @@ const MoreEvents = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
+          style={{backgroundColor: theme.aliceBlue}}
         >
-          <h2 className="text-3xl font-bold text-blue-600">{workshopData[currentIndex].title}</h2>
+          <h2 className="text-3xl font-bold " style={{color: theme.uclaBlue}}>{workshopData[currentIndex].title}</h2>
           <p className="text-lg mt-2">{workshopData[currentIndex].description}</p>
           <p className="mt-2"><strong>📍 Venue:</strong> {workshopData[currentIndex].venue}</p>
           <p><strong>🕒 Time:</strong> {workshopData[currentIndex].time}</p>
@@ -127,7 +136,7 @@ const MoreEvents = () => {
       <AnimatePresence>
         {modalOpen && (
           <motion.div
-            className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 "
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -137,6 +146,7 @@ const MoreEvents = () => {
               initial={{ scale: 0.7 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.7 }}
+              style={{backgroundColor:theme.aliceBlue}}
             >
               <h2 className="text-2xl font-bold text-blue-600">{workshopData[currentIndex].title}</h2>
               <p className="mt-2">{workshopData[currentIndex].fullDescription}</p>
@@ -144,7 +154,7 @@ const MoreEvents = () => {
               <p><strong>📚 Prerequisites:</strong> {workshopData[currentIndex].prerequisites}</p>
               <p><strong>🎓 Eligibility:</strong> {workshopData[currentIndex].eligibility}</p>
 
-              <div className="flex justify-between mt-5">
+              <div className="flex justify-between mt-5" >
                 <button
                   className="px-5 py-2 bg-gradient-to-r from-[#83d6f1] to-[#00b0ff] rounded-lg text-white font-semibold hover:scale-105 transition-all duration-300"
                 >
@@ -168,3 +178,4 @@ const MoreEvents = () => {
 };
 
 export default MoreEvents;
+

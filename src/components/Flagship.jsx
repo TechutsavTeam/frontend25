@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import EventLogo from "../assets/event-logo.png";
 
-const Flagship = () => {
+const Flagship = ({ uniqueName, eventName, eventDescription, image }) => {
   const [isHovered, setIsHovered] = useState(false);
   const divRef = useRef(null);
 
@@ -16,7 +16,7 @@ const Flagship = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-[#E7F1FB] 6">
+    <div className="flex flex-col h-screen bg-[#E7F1FB] px-2">
       <div className="container mx-auto px-4">
         {/* Updated Events Heading */}
         <h1 className="text-4xl sm:text-6xl font-bold text-[#278092] text-left mb-4">EVENTS</h1>
@@ -25,7 +25,7 @@ const Flagship = () => {
         <div
           ref={divRef}
           onMouseMove={handleMouseMove}
-          className="relative p-4 md:w-1/2 flex flex-col gap-4 items-center cursor-pointer transition-transform duration-400 ease-in-out transform hover:scale-105 text-center overflow-hidden"
+          className="relative p-4 w-full md:w-3/4 lg:w-1/2 flex flex-col gap-4 items-center cursor-pointer transition-transform duration-400 ease-in-out transform hover:scale-105 text-center overflow-hidden"
           style={{
             borderRadius: "2rem",
             border: "3px dashed transparent",
@@ -34,13 +34,14 @@ const Flagship = () => {
             borderImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><polygon fill=\"none\" stroke=\"#3373b0\" stroke-width=\"4\" points=\"50,0 61,35 98,35 68,57 79,91 50,70 21,91 32,57 2,35 39,35\"/></svg>') 1",
           }}
         >
-          <img src={EventLogo} alt="Event" className="w-1/2 md:w-1/3 mb-4" />
-          <h1 className="font-bold text-2xl text-[#0B385F]">Workshop</h1>
-          <p className="text-justify text-[#0b385f]  leading-relaxed pl-10 pr-10">
-            The metaverse is driving innovation across industries, from immersive entertainment experiences and revolutionary education methods to transformative healthcare applications. Companies leveraging virtual environments in retail, architecture, and real estate are reducing costs and accelerating decision-making. As the metaverse evolves, businesses must adapt to stay competitive and unlock new growth opportunities.
+          <img src={EventLogo} alt="Event" className=" w-1/2 md:w-1/3 mb-4" />
+          <h1 className="font-bold text-2xl sm:text-3xl text-[#0B385F]">{eventName}</h1>
+          <p className="text-justify text-[#0b385f] leading-relaxed px-4 sm:px-10">
+            {eventDescription}
+            {/* The metaverse is driving innovation across industries, from immersive entertainment experiences and revolutionary education methods to transformative healthcare applications. Companies leveraging virtual environments in retail, architecture, and real estate are reducing costs and accelerating decision-making. As the metaverse evolves, businesses must adapt to stay competitive and unlock new growth opportunities. */}
           </p>
           <Link
-            to="/events/Workshop"
+            to={`/events/${uniqueName}`}
             className={`px-6 py-2 mt-3 flex items-center gap-2 bg-[#003262] text-white font-semibold rounded-2xl transition-transform duration-300 transform hover:scale-110 shadow-md hover:shadow-lg ${
               isHovered ? 'pl-6 pr-7' : ''
             } animate-pulse hover:animate-none`}
@@ -58,7 +59,6 @@ const Flagship = () => {
           />
         </div>
       </div>
-
     </div>
   );
 };
