@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useTransform } from "framer-motion";
 import { api } from "../api/auth";
 import { useMediaQuery } from "@mui/material";
 
 // Static images for each department (Replace with actual image paths)
 const departmentImages = {
-  CSE: "/images/cs.jpg",
+  CSE: "/images/cs.png",
   IT: "/images/it.png",
   CSBS: "/images/csbs.png",
   DS: "/images/ds.png",
@@ -32,9 +32,9 @@ const SpotlightCard = ({ name, onClick }) => {
       className="card-spotlight"
       style={{
         position: "relative",
+        marginBottom: "30px",
         overflow: "hidden",
         borderRadius: "12px",
-        border: "3px solid transparent",
         animation: "neon-glow 1.8s infinite alternate",
         backgroundImage: `url(${departmentImages[name]})`,
         backgroundSize: "cover",
@@ -45,8 +45,15 @@ const SpotlightCard = ({ name, onClick }) => {
         justifyContent: "center",
         alignItems: "center",
       }}
-      whileHover={{ scale: 1.05 }} // Reduced scale to 1.05 for smoother zoom
-      transition={{ type: "spring", stiffness: 100, damping: 10 }} // Reduced stiffness to remove lag
+      whileHover={{
+        scale: 1.05,
+        rotate: Math.random() > 0.5 ? -5 : 5, // Randomly tilts left or right
+      }}
+      transition={{
+        type: "spring",
+        stiffness: 120,
+        damping: 10,
+      }}
     >
       <div
         className="overlay"
@@ -73,6 +80,8 @@ const SpotlightCard = ({ name, onClick }) => {
     </motion.div>
   );
 };
+
+
 
 const Events = () => {
   const [flagShipEvents, setFlagShipEvents] = useState([]);
