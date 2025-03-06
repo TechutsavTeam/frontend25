@@ -12,11 +12,12 @@ const CardSkeleton = ({ cards }) => {
         <div
           className={`${
             mobileCheck ? "h-[600px]" : "max-h-[500px]"
-          } lg:w-full w-5/6 border-2 border-black/35  rounded-md p-7 flex flex-col gap-9 items-center cursor-pointer transition-transform duration-300   aspect-[1/1] text-center`}
+          } lg:w-full w-5/6 border-2 border-black/35  rounded-md p-7 flex flex-col gap-9 items-center cursor-pointer transition-transform duration-300 aspect-[1/1] text-center`}
           key={i}
+          
         >
           <div>
-            <Skeleton circle width={130} height={130} />
+            <Skeleton circle width={130} height={130} style={{backgroundColor:'white'}} />
           </div>
           <div className="w-full h-full flex flex-col gap-3  ">
             <Skeleton height={25} />

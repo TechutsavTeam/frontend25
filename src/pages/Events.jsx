@@ -4,7 +4,7 @@ import { api } from '../api/auth'
 import { useMediaQuery } from '@mui/material'
 import Flagship from '../components/Flagship'
 import CardSkeleton from '../components/CardSkeleton'
-
+import Skeleton from "react-loading-skeleton";
 // Static images for each department (Replace with actual image paths)
 const departmentImages = {
   CSE: '/images/cs.png',
@@ -88,8 +88,8 @@ const Events = () => {
   const [flagshipLoading, setFlagshipLoading] = useState(true)
   const departments = ['CSE', 'IT', 'CSBS', 'DS']
 
-  const handleDepartmentClick = dept => {
-    window.location.href = `/more-events/${dept.toLowerCase()}`
+  const handleDepartmentClick = i => {
+    window.location.href = `/more-events/${departments[i]}`
   }
 
   useEffect(() => {
@@ -98,9 +98,6 @@ const Events = () => {
       .get('event/getFlagshipEvents')
       .then(result => {
         setFlagShipEvents(result.data)
-        // console.log('..........', flagShipEvents[0]['uniqueName'])
-        // console.log('..........', flagShipEvents[0]['eventName'])
-        // console.log('..........', flagShipEvents[0]['eventAbstract'])
         setFlagshipLoading(false)
       })
       .catch(err => {
@@ -109,22 +106,28 @@ const Events = () => {
   }, [])
 
   return (
-    <>
-      {flagshipLoading ? (
-        <CardSkeleton cards={1} />
-      ) : (
-        flagShipEvents.length > 0 && (
-          <Flagship
-            uniqueName={flagShipEvents[0]['uniqueName']}
-            eventName={flagShipEvents[0]['eventName']}
-            eventDescription={flagShipEvents[0]['eventAbstract']}
-            image={'https://csi.coep.org.in/csi_logo.png'}
-          />
-        )
-      )}
+    <div className = 'px-5' style={{backgroundColor: '#e0f2fe'}}>
+      <div className='w-full flex justify-center'>
+        {flagshipLoading ? (
+          <CardSkeleton cards={1} />
+        ) : (
+          flagShipEvents.map(element => {
+            console.log(element)
+            return (
+              <div className='flex w-full sm:justify-center'>
+                <Flagship
+                  uniqueName={element['uniqueName']}
+                  eventName={element['eventName']}
+                  eventDescription={element['eventAbstract']}
+                  image={'https://csi.coep.org.in/csi_logo.png'}
+                />
+              </div>
+            )
+          })
+        )}
+      </div>
       <div
-        className='py-10 px-4 sm:px-9 flex flex-col gap-8'
-        style={{ backgroundColor: '#e0f2fe' }}
+        className='py-10 sm:px-9 flex flex-col gap-8'
       >
         <div className='w-full justify-start'>
           <h1 className='font-semibold text-xl sm:text-3xl'>Departments</h1>
@@ -133,13 +136,13 @@ const Events = () => {
               <SpotlightCard
                 key={i}
                 name={dept}
-                onClick={() => handleDepartmentClick(dept)}
+                onClick={() => handleDepartmentClick(i)}
               />
             ))}
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
