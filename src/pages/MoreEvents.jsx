@@ -73,7 +73,7 @@ const MoreEvents = () => {
         className="flex flex-col items-center justify-center w-full gap-6 p-9 relative min-h-screen"
         ref={scrollUp}
       >
-        <h1 className="text-5xl font-bold">TECHUTSAV 2024</h1>
+        <h1 className="text-5xl font-bold">TECHUTSAV 2025</h1>
         <h2 className="text-4xl font-bold">EVENTS</h2>
         <div className="w-full flex justify-end">
           {/* <div className="border-2 border-black rounded-lg mr-9">

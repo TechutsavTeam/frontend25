@@ -1,78 +1,62 @@
-// import React, { useState } from "react";
-import logo from "../assets/logo.png";
-// const Navbar = () => {
-// const [isLoginHovered, setIsLoginHovered] = useState(false);
-
-//   return (
-//     <nav className="flex w-full justify-between items-center px-4 fixed bg-white/90 z-20 ">
-//       <div>
-//         <img src={logo} alt="TCE" className="mt-1" />
-//       </div>
-//       <div>
-//         <ul className="flex gap-14 items-center">
-//           <li className="cursor-pointer">HOME</li>
-//           <li className="cursor-pointer">ABOUT</li>
-//           <li className="cursor-pointer">EVENTS</li>
-//           <li className="cursor-pointer">FAQs</li>
-//           <li className="cursor-pointer">CONTACT</li>
-// <li className="cursor-pointer">
-//   <button
-//     className={`px-7 py-1  fill-right  hover:text-white border-2 border-black rounded-md ${
-//       isLoginHovered ? "hovered" : ""
-//     }`}
-//     onMouseEnter={() => setIsLoginHovered(true)}
-//     onMouseLeave={() => setIsLoginHovered(false)}
-//   >
-//     Profile
-//   </button>
-// </li>
-//         </ul>
-//       </div>
-//     </nav>
-//   );
-// };
-
-// export default Navbar;
-
 import React, { useState } from "react";
 import { Link } from "react-scroll";
 import { api } from "../api/auth";
 import { useNavigate } from "react-router-dom";
+import logo from "../assets/logo.png";
 
 const Navbar = ({ authenticated }) => {
   const [isLoginHovered, setIsLoginHovered] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [activeLink, setActiveLink] = useState("home");
+  const navigate = useNavigate();
 
-  let Links = [
+  // Dark theme colors
+  const theme = {
+    eerieBlack: "#1C2127",
+    berkeleyBlue: "#0B385F",
+    uclaBlue: "#3373B0",
+    columbiaBlue: "#BED4E9",
+    aliceBlue: "#E7F1FB"
+  };
+
+  const Links = [
     { name: "HOME", link: "home" },
     { name: "ABOUT", link: "about" },
     { name: "EVENTS", link: "events" },
     { name: "FAQs", link: "faq" },
     { name: "CONTACT", link: "contact" },
   ];
-  const [open, setOpen] = useState(false);
-  let navigate = useNavigate();
+
   return (
-    <div className=" w-full top-0 left-0 sticky z-40  ">
-      <div className="lg:flex items-center flex  justify-between py-2 bg-[#f6f6fe] lg:px-10 px-9 ">
-        <div className="font-bold text-2xl cursor-pointer flex items-center font-[Poppins]  ">
+    <div className="w-full top-0 left-0 sticky z-40">
+      <div 
+        className="lg:flex items-center flex justify-between py-3 lg:px-10 px-9 shadow-md" 
+        style={{ 
+          backgroundColor: theme.eerieBlack,
+          borderBottom: `1px solid ${theme.uclaBlue}`
+        }}
+      >
+        <div className="font-bold text-2xl cursor-pointer flex items-center font-[Poppins]">
           <Link
             to="home"
             spy={true}
             smooth={true}
             duration={500}
             offset={-30}
-            className=""
+            className="transition-transform hover:scale-105"
+            onClick={() => setActiveLink("home")}
           >
-            <img src={logo} alt="TCE" />
+            <img src={logo} alt="TCE" className="max-h-12" />
           </Link>
         </div>
+
         <div
           onClick={() => setOpen(!open)}
           className="text-3xl absolute right-8 top-4 cursor-pointer lg:hidden flex items-center h-[5vh]"
+          style={{ color: theme.aliceBlue }}
         >
-          {/* <ion-icon name={open ? "close" : "menu"}></ion-icon> */}
           {open ? (
-            <button>
+            <button className="transition-all duration-300 hover:text-uclaBlue" style={{ color: theme.columbiaBlue, hover: { color: theme.uclaBlue } }}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -89,7 +73,7 @@ const Navbar = ({ authenticated }) => {
               </svg>
             </button>
           ) : (
-            <button>
+            <button className="transition-all duration-300 hover:text-uclaBlue" style={{ color: theme.columbiaBlue }}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -109,17 +93,21 @@ const Navbar = ({ authenticated }) => {
         </div>
 
         <ul
-          className={`lg:flex lg:items-center lg:pb-0 pb-9 absolute lg:static bg-[#f6f6fe] md:z-auto z-[-1] left-0 w-full lg:w-auto lg:pl-0 pl-9 transition-all duration-500 ease-in ${
-            open ? "top-20 " : "top-[-490px]"
+          className={`lg:flex lg:items-center lg:pb-0 pb-9 absolute lg:static md:z-auto z-[-1] left-0 w-full lg:w-auto lg:pl-0 pl-9 transition-all duration-500 ease-in ${
+            open ? "top-20" : "top-[-490px]"
           }`}
+          style={{ 
+            backgroundColor: theme.eerieBlack
+          }}
         >
           {Links.map((link) => (
             <li
               key={link.name}
-              className="lg:ml-16 text-xl lg:my-0 my-7 cursor-pointer"
+              className="lg:ml-8 text-xl lg:my-0 my-7 cursor-pointer"
             >
               <Link
                 onClick={() => {
+                  setActiveLink(link.link);
                   open ? setOpen(!open) : setOpen(open);
                 }}
                 to={link.link}
@@ -127,21 +115,23 @@ const Navbar = ({ authenticated }) => {
                 smooth={true}
                 duration={500}
                 offset={-70}
-                className="  font-semibold text-base tracking-wider"
+                className="font-semibold text-base tracking-wider px-4 py-2 rounded-md transition-all duration-300 relative"
+                style={{ 
+                  color: activeLink === link.link ? theme.uclaBlue : theme.columbiaBlue,
+                  borderBottom: activeLink === link.link ? `2px solid ${theme.uclaBlue}` : 'none'
+                }}
               >
                 {link.name}
               </Link>
             </li>
           ))}
-          <li className="cursor-pointer ml-0 lg:ml-11">
+          <li className="cursor-pointer ml-0 lg:ml-8 lg:mt-0 mt-7">
             {authenticated ? (
               <button
-                to="/login"
                 onClick={() => {
                   api
                     .get("auth/logout")
                     .then((res) => {
-                      //console.log(res);
                       sessionStorage.removeItem("name");
                       sessionStorage.removeItem("email");
                       sessionStorage.removeItem("college");
@@ -152,12 +142,15 @@ const Navbar = ({ authenticated }) => {
                       window.location.reload();
                     })
                     .catch((err) => {
-                      //console.log(err);
+                      // console.log(err);
                     });
                 }}
-                className={`px-7 py-1  fill-right  hover:text-white border-2 border-black rounded-md ${
-                  isLoginHovered ? "hovered" : ""
-                }`}
+                className="px-7 py-2 rounded-md transition-all duration-300 font-medium"
+                style={{ 
+                  backgroundColor: isLoginHovered ? theme.uclaBlue : 'transparent',
+                  color: isLoginHovered ? theme.aliceBlue : theme.uclaBlue,
+                  border: `2px solid ${theme.uclaBlue}`,
+                }}
                 onMouseEnter={() => setIsLoginHovered(true)}
                 onMouseLeave={() => setIsLoginHovered(false)}
               >
@@ -170,17 +163,18 @@ const Navbar = ({ authenticated }) => {
                   api
                     .get("profile/getProfile")
                     .then((res) => {
-                      //console.log(res);
                       navigate("/login");
                     })
                     .catch((err) => {
-                      //console.log(err);
                       navigate("/login");
                     });
                 }}
-                className={`px-7 py-1  fill-right  hover:text-white border-2 border-black rounded-md ${
-                  isLoginHovered ? "hovered" : ""
-                }`}
+                className="px-7 py-2 rounded-md transition-all duration-300 font-medium"
+                style={{ 
+                  backgroundColor: isLoginHovered ? theme.uclaBlue : 'transparent',
+                  color: isLoginHovered ? theme.aliceBlue : theme.uclaBlue,
+                  border: `2px solid ${theme.uclaBlue}`,
+                }}
                 onMouseEnter={() => setIsLoginHovered(true)}
                 onMouseLeave={() => setIsLoginHovered(false)}
               >
